@@ -1,0 +1,4 @@
+api-client-angular/target/**
+api-client-java/target/**
+api-server-java/target/**
+.idea/**

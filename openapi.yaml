@@ -1,0 +1,1307 @@
+openapi: 3.0.3
+info:
+  title: Java Accounting
+  description: The Accounting service is responsible for sending and receiving information about user operations.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/accounting'
+tags:
+  - name: Wallet
+    description: User wallets
+  - name: Category
+    description: Category of the operation performed by the user
+  - name: Status
+    description: Current status of the related entity
+  - name: Brand
+    description: Brand of the operation performed by the user
+  - name: AccountEntry
+    description: Operations made by the user
+  - name: Role
+    description: User role
+  - name: Store
+    description: Store of the operation performed by the user
+  - name: AccountEntryType
+    description: AccountEntry Type performed by the user
+  - name: User
+    description: User data registered in the system
+paths:
+  /wallets:
+    get:
+      tags:
+        - Wallet
+      summary: Gets all wallets
+      operationId: getWallets
+      responses:
+        '200':
+          description: List of wallets found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
+        '500':
+          description: Server error
+    post:
+      tags:
+        - Wallet
+      summary: Crea una nueva wallet
+      operationId: createWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+      responses:
+        '200':
+          description: Wallet creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          description: Some of the parameters provided are not valid.
+        '500':
+          description: Server error
+  '/getWalletsByUserId/{userId}':
+    get:
+      tags:
+        - Wallet
+      summary: Obtains a wallet by user ID
+      operationId: getWalletsByUserId
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: User ID to be obtained
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Wallet found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
+        '404':
+          description: Wallet not found
+        '500':
+          description: Server error
+  /deleteWallet/{walletId}:
+    delete:
+      tags:
+        - Wallet
+      summary: Delete an existing wallet
+      operationId: deleteWallet
+      parameters:
+        - in: path
+          name: walletId
+          required: true
+          description: ID of the wallet to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Wallet successfully deleted
+        '404':
+          description: Wallet not found
+        '500':
+          description: Server error
+  '/wallet/{walletId}':
+    get:
+      tags:
+        - Wallet
+      summary: Obtains a wallet by its ID
+      operationId: getWalletById
+      parameters:
+        - in: path
+          name: walletId
+          required: true
+          description: Wallet ID to be obtained
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Wallet found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '404':
+          description: Wallet not found
+        '500':
+          description: Server error
+  /updateWallet:
+    put:
+      tags:
+        - Wallet
+      summary: Upgrade an existing wallet
+      operationId: updateWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+      responses:
+        '200':
+          description: Wallet successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          description: Some of the parameters provided are not valid.
+        '404':
+          description: Wallet not found
+        '500':
+          description: Server error
+  /getCategories:
+    get:
+      tags:
+        - Category
+      summary: Get all categories
+      operationId: getCategories
+      responses:
+        '200':
+          description: List of all categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '500':
+          description: Server error
+  /getCategories/{userId}:
+    get:
+      tags:
+        - Category
+      summary: Get all categories
+      operationId: getCategoriesByUserId
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: List of all categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '500':
+          description: Server error
+  /getCategory/{categoryId}:
+    get:
+      tags:
+        - Category
+      summary: Gets the category by ID
+      operationId: getCategoryById
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          description: Category ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+        '500':
+          description: Server error
+  /createCategory:
+    post:
+      tags:
+        - Category
+      summary: Create a new category
+      operationId: createCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Category successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateCategory:
+    put:
+      tags:
+        - Category
+      summary: Update an existing category
+      operationId: updateCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Category successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteCategory/{categoryId}:
+    delete:
+      tags:
+        - Category
+      summary: Delete an existing category
+      operationId: deleteCategory
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          description: ID of the category to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Category successfully deleted
+        '404':
+          description: Category not found
+        '500':
+          description: Server error
+  /getStores:
+    get:
+      tags:
+        - Store
+      summary: Get all the stores
+      operationId: getStores
+      responses:
+        '200':
+          description: List of all stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+        '500':
+          description: Server error
+  /getStores/{userId}:
+    get:
+      tags:
+        - Store
+      summary: Get all the stores by user
+      operationId: getStoresByUserId
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: List of all stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+        '500':
+          description: Server error
+  /getStore/{storeId}:
+    get:
+      tags:
+        - Store
+      summary: Gets the store by ID
+      operationId: getStoreById
+      parameters:
+        - in: path
+          name: storeId
+          required: true
+          description: Store ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '404':
+          description: The store was not found
+        '500':
+          description: Server error
+  /createStore:
+    post:
+      tags:
+        - Store
+      summary: Create a new store
+      operationId: createStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Store'
+      responses:
+        '200':
+          description: Store successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateStore:
+    put:
+      tags:
+        - Store
+      summary: Upgrade an existing store
+      operationId: updateStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Store'
+      responses:
+        '200':
+          description: Store successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteStore/{storeId}:
+    delete:
+      tags:
+        - Store
+      summary: Delete an existing store
+      operationId: deleteStore
+      parameters:
+        - in: path
+          name: storeId
+          required: true
+          description: ID of the store to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Store successfully removed
+        '404':
+          description: The store was not found
+        '500':
+          description: Server error
+  /getBrands:
+    get:
+      tags:
+        - Brand
+      summary: Obtains all the brands
+      operationId: getBrands
+      responses:
+        '200':
+          description: List of all brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+        '500':
+          description: Server error
+  /getBrands/{userId}:
+    get:
+      tags:
+        - Brand
+      summary: Get all the brands by user
+      operationId: getBrandsByUserId
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: List of all brands by user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+        '500':
+          description: Server error
+  /getBrand/{brandId}:
+    get:
+      tags:
+        - Brand
+      summary: Gets the brand by ID
+      operationId: getBrandById
+      parameters:
+        - in: path
+          name: brandId
+          required: true
+          description: Brand ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Brand
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+        '404':
+          description: The brand was not found
+        '500':
+          description: Server error
+  /createBrand:
+    post:
+      tags:
+        - Brand
+      summary: Create a new brand
+      operationId: createBrand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+      responses:
+        '200':
+          description: Brand successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateBrand:
+    put:
+      tags:
+        - Brand
+      summary: Upgrade an existing brand
+      operationId: updateBrand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+      responses:
+        '200':
+          description: Brand successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteBrand/{brandId}:
+    delete:
+      tags:
+        - Brand
+      summary: Remove an existing brand
+      operationId: deleteBrand
+      parameters:
+        - in: path
+          name: brandId
+          required: true
+          description: ID of the brand to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Brand eliminada exitosamente
+        '404':
+          description: The brand was not found
+        '500':
+          description: Server error
+  /getStatus:
+    get:
+      tags:
+        - Status
+      summary: Get all the statuses
+      operationId: getStatus
+      responses:
+        '200':
+          description: List of all statuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Status'
+        '500':
+          description: Server error
+  /getStatus/{statusId}:
+    get:
+      tags:
+        - Status
+      summary: Get status by ID
+      operationId: getStatusById
+      parameters:
+        - in: path
+          name: statusId
+          required: true
+          description: Status ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '404':
+          description: Status not found
+        '500':
+          description: Server error
+  /createStatus:
+    post:
+      tags:
+        - Status
+      summary: Create a new status
+      operationId: createStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '200':
+          description: Status successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateStatus:
+    put:
+      tags:
+        - Status
+      summary: Update an existing status
+      operationId: updateStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Status'
+      responses:
+        '200':
+          description: Status successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteStatus/{statusId}:
+    delete:
+      tags:
+        - Status
+      summary: Deletes an existing status
+      operationId: deleteStatus
+      parameters:
+        - in: path
+          name: statusId
+          required: true
+          description: ID of the state to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Status successfully removed
+        '404':
+          description: The status was not found
+        '500':
+          description: Server error
+  /getRoles:
+    get:
+      tags:
+        - Role
+      summary: Get all roles
+      operationId: getRoles
+      responses:
+        '200':
+          description: List of all roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '500':
+          description: Server error
+  /getRole/{roleId}:
+    get:
+      tags:
+        - Role
+      summary: Get the role by ID
+      operationId: getRoleById
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '404':
+          description: The role was not found
+        '500':
+          description: Server error
+  /createRole:
+    post:
+      tags:
+        - Role
+      summary: Create a new role
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Successfully created role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateRole:
+    put:
+      tags:
+        - Role
+      summary: Upgrade an existing role
+      operationId: updateRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Role successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteRole/{roleId}:
+    delete:
+      tags:
+        - Role
+      summary: Remove an existing role
+      operationId: deleteRole
+      parameters:
+        - in: path
+          name: roleId
+          required: true
+          description: ID of the role to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Role successfully eliminated
+        '404':
+          description: The role was not found
+        '500':
+          description: Server error
+  /getAccountEntries:
+    get:
+      tags:
+        - AccountEntry
+      summary: Get all the operations
+      operationId: getAccountEntries
+      responses:
+        '200':
+          description: List of all operations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountEntry'
+        '500':
+          description: Server error
+  /getAccountEntry/{operationId}:
+    get:
+      tags:
+        - AccountEntry
+      summary: Get operation by ID
+      operationId: getAccountEntryById
+      parameters:
+        - in: path
+          name: operationId
+          required: true
+          description: AccountEntry ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: AccountEntry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntry'
+        '404':
+          description: The operation was not found
+        '500':
+          description: Server error
+  /getAccountEntryByWallet/{walletId}:
+    get:
+      tags:
+        - AccountEntry
+      summary: Get operation by Wallet ID
+      operationId: getAccountEntryByWalletId
+      parameters:
+        - in: path
+          name: walletId
+          required: true
+          description: AccountEntry ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: AccountEntry
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountEntry'
+        '404':
+          description: The operation was not found
+        '500':
+          description: Server error
+  /createAccountEntry:
+    post:
+      tags:
+        - AccountEntry
+      summary: Create a new operation
+      operationId: createAccountEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountEntry'
+      responses:
+        '200':
+          description: AccountEntry successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntry'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateAccountEntry:
+    put:
+      tags:
+        - AccountEntry
+      summary: Update an existing operation
+      operationId: updateAccountEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountEntry'
+      responses:
+        '200':
+          description: AccountEntry successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntry'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteAccountEntry/{operationId}:
+    delete:
+      tags:
+        - AccountEntry
+      summary: Delete an existing operation
+      operationId: deleteAccountEntry
+      parameters:
+        - in: path
+          name: operationId
+          required: true
+          description: ID of the operation to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: AccountEntry successfully removed
+        '404':
+          description: The operation was not found
+        '500':
+          description: Server error
+  /getAccountEntryTypes:
+    get:
+      tags:
+        - AccountEntryType
+      summary: Get all operation types
+      operationId: getAccountEntryTypes
+      responses:
+        '200':
+          description: List of all operation types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountEntryType'
+        '500':
+          description: Server error
+  /getAccountEntryType/{operationTypeId}:
+    get:
+      tags:
+        - AccountEntryType
+      summary: Get the operation type by ID
+      operationId: getAccountEntryTypeById
+      parameters:
+        - in: path
+          name: operationTypeId
+          required: true
+          description: AccountEntry type ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: AccountEntry Type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntryType'
+        '404':
+          description: The operation type was not found
+        '500':
+          description: Server error
+  /createAccountEntryType:
+    post:
+      tags:
+        - AccountEntryType
+      summary: Creates a new operation type
+      operationId: createAccountEntryType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountEntryType'
+      responses:
+        '200':
+          description: AccountEntry type successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntryType'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateAccountEntryType:
+    put:
+      tags:
+        - AccountEntryType
+      summary: Update an existing operation type
+      operationId: updateAccountEntryType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountEntryType'
+      responses:
+        '200':
+          description: AccountEntry type successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntryType'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteAccountEntryType/{operationTypeId}:
+    delete:
+      tags:
+        - AccountEntryType
+      summary: Delete an existing operation type
+      operationId: deleteAccountEntryType
+      parameters:
+        - in: path
+          name: operationTypeId
+          required: true
+          description: ID of the operation type to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: AccountEntry type successfully removed
+        '404':
+          description: The operation type was not found
+        '500':
+          description: Server error
+  /getUsers:
+    get:
+      tags:
+        - User
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Server error
+  /getUser/{userId}:
+    get:
+      tags:
+        - User
+      summary: Get the user by user ID
+      operationId: getUserById
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /getUserByUsername/{username}:
+    get:
+      tags:
+        - User
+      summary: Get the user by username
+      operationId: getUserByUsername
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: User ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /getUserByEmail/{email}:
+    get:
+      tags:
+        - User
+      summary: Get the user by email
+      operationId: getUserByEmail
+      parameters:
+        - in: path
+          name: email
+          required: true
+          description: User ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /createUser:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /updateUser:
+    put:
+      tags:
+        - User
+      summary: Update an existing user
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Some of the parameters are not valid
+        '500':
+          description: Server error
+  /deleteUser/{userId}:
+    delete:
+      tags:
+        - User
+      summary: Delete an existing user
+      operationId: deleteUser
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ID of the user to be deleted
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User successfully deleted
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+components:
+  schemas:
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        budget:
+          type: number
+          format: float
+        comment:
+          type: string
+        name:
+          type: string
+          format: date-time
+        creation_date:
+          type: string
+          format: date-time
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        comment:
+          type: string
+        name:
+          type: string
+    Store:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        comment:
+          type: string
+        name:
+          type: string
+    Brand:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        comment:
+          type: string
+        name:
+          type: string
+    Status:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Role:
+      type: object
+      properties:
+        name:
+          type: string
+    AccountEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          format: float
+        wallet:
+          $ref: '#/components/schemas/Wallet'
+        comment:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        date:
+          type: string
+          format: date
+        brand:
+          $ref: '#/components/schemas/Brand'
+        store:
+          $ref: '#/components/schemas/Store'
+        type_operation:
+          $ref: '#/components/schemas/AccountEntryType'
+    AccountEntryType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        comment:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        name:
+          type: string
+        last_modification:
+          type: string
+          format: date-time
+          description: Date of last change in transaction type
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        comment:
+          type: string
+        record_date:
+          type: string
+          format: date-time
+        role:
+          $ref: '#/components/schemas/Role'

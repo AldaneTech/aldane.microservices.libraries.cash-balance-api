@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.aldane</groupId>
+        <artifactId>cash-balance-api</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>cash-balance-api-client-angular</artifactId>
+    <version>1.0.0</version>
+
+    <name>Cash Balance API - Client Angular</name>
+    <description>REST API for cash balance management</description>
+
+    <properties>
+        <openapi-generator-maven-plugin.version>7.13.0</openapi-generator-maven-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-api-code-client-angular</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../openapi.yaml</inputSpec>
+                            <generatorName>typescript-angular</generatorName>
+                            <gitUserId>aldanetech</gitUserId>
+                            <gitRepoId>aldane.microservices.libraries.cash-balance-api</gitRepoId>
+                            <configOptions>
+                                <npmName>@aldanetech/${project.artifactId}</npmName>
+                                <providedInRoot>true</providedInRoot>
+                                <apiModulePrefix>Accounting</apiModulePrefix>
+                                <ngVersion>18.2.12</ngVersion>
+                                <snapshot>false</snapshot>
+                                <npmVersion>${project.version}</npmVersion>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/AldaneTech/aldane.microservices.libraries.cash-balance-client-angular</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/AldaneTech/aldane.microservices.libraries.cash-balance-api</url>
+        </repository>
+    </distributionManagement>
+</project>
