@@ -7,11 +7,10 @@
     <parent>
         <groupId>net.aldane</groupId>
         <artifactId>cash-balance-api</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>cash-balance-api-server-java</artifactId>
-    <version>1.0.0</version>
 
     <name>Cash Balance API - Server</name>
     <description>REST API for cash balance management</description>

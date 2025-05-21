@@ -1199,7 +1199,6 @@ components:
           type: string
         name:
           type: string
-          format: date-time
         creation_date:
           type: string
           format: date-time
@@ -1244,6 +1243,9 @@ components:
     Role:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         name:
           type: string
     AccountEntry:
