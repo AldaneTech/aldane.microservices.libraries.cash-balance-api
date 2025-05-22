@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.aldane</groupId>
         <artifactId>cash-balance-api</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>cash-balance-api-client-angular</artifactId>
