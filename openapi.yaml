@@ -1248,6 +1248,10 @@ components:
           format: int64
         name:
           type: string
+        comment:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
     AccountEntry:
       type: object
       properties:
