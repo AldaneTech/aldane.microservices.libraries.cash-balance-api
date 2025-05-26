@@ -1202,6 +1202,12 @@ components:
         creation_date:
           type: string
           format: date-time
+        last_modification:
+          type: string
+          format: date-time
+          description: Date of last change in wallet
+        status:
+          $ref: '#/components/schemas/Status'
     Category:
       type: object
       properties:
@@ -1212,6 +1218,12 @@ components:
           type: string
         name:
           type: string
+        last_modification:
+          type: string
+          format: date-time
+          description: Date of last change in category
+        status:
+          $ref: '#/components/schemas/Status'
     Store:
       type: object
       properties:
@@ -1222,6 +1234,12 @@ components:
           type: string
         name:
           type: string
+        last_modification:
+          type: string
+          format: date-time
+          description: Date of last change in store
+        status:
+          $ref: '#/components/schemas/Status'
     Brand:
       type: object
       properties:
@@ -1232,6 +1250,12 @@ components:
           type: string
         name:
           type: string
+        last_modification:
+          type: string
+          format: date-time
+          description: Date of last change in brand
+        status:
+          $ref: '#/components/schemas/Status'
     Status:
       type: object
       properties:
