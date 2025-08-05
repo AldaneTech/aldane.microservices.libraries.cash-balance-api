@@ -36,6 +36,7 @@ jobs:
           cd /home/runner/work/aldane.microservices.libraries.cash-balance-api/aldane.microservices.libraries.cash-balance-api/api-client-angular/target/generated-sources/openapi
           npm i
           npm run build
+          cd dist
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
