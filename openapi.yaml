@@ -6,6 +6,8 @@ info:
 servers:
   - url: 'http://localhost:8080/accounting'
 tags:
+  - name: Auth
+    description: Auth endpoints
   - name: Wallet
     description: User wallets
   - name: Category
@@ -25,6 +27,30 @@ tags:
   - name: User
     description: User data registered in the system
 paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Autentica un usuario y devuelve un token JWT
+      operationId: login
+      requestBody:
+        required: true
+        description: User credentials
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Autenticación correcta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Credenciales incorrectas
+        '500':
+          description: Error interno del servidor
   /wallets:
     get:
       tags:
@@ -1186,6 +1212,25 @@ paths:
           description: Server error
 components:
   schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john_doe
+        password:
+          type: string
+          example: mysecretpassword
+      required:
+        - username
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT generado
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     Wallet:
       type: object
       properties:
