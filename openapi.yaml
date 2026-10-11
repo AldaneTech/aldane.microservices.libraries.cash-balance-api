@@ -4,7 +4,7 @@ info:
   description: The Accounting service is responsible for sending and receiving information about user operations.
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8080/accounting'
+  - url: 'http://localhost:8080/cash-balance'
 tags:
   - name: Auth
     description: Auth endpoints
@@ -1329,7 +1329,7 @@ components:
           format: int64
         amount:
           type: number
-          format: float
+          format: number
         wallet:
           $ref: '#/components/schemas/Wallet'
         comment:
