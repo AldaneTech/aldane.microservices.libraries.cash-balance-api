@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Java Accounting
   description: The Accounting service is responsible for sending and receiving information about user operations.
-  version: 1.0.0
+  version: 1.4.0
 servers:
   - url: 'http://localhost:8080/cash-balance'
 tags:
@@ -26,6 +26,8 @@ tags:
     description: AccountEntry Type performed by the user
   - name: User
     description: User data registered in the system
+  - name: Dashboard
+    description: Current user statistics
 paths:
   /login:
     post:
@@ -883,6 +885,7 @@ paths:
         - AccountEntry
       summary: Create a new operation
       operationId: createAccountEntry
+      description: Requires amount, wallet.id and type_operation.id. Type 1 stores abs(amount) as income; type 2 stores -abs(amount) as expense. Other active types preserve the supplied sign. Date defaults to current UTC date/time. Optional category, brand and store must belong to the wallet owner and be active.
       requestBody:
         required: true
         content:
@@ -906,6 +909,7 @@ paths:
         - AccountEntry
       summary: Update an existing operation
       operationId: updateAccountEntry
+      description: Requires id and amount. Updates comment, category, brand, store, date and type. Null or omitted category, brand and store clear the association; omitted date and type preserve existing values. Wallet cannot change. Type 1 stores abs(amount); type 2 stores -abs(amount); other active types preserve the supplied sign. The balance is adjusted by the difference from the previous stored amount.
       requestBody:
         required: true
         content:
@@ -1172,6 +1176,7 @@ paths:
         - User
       summary: Update an existing user
       operationId: updateUser
+      description: Updates profile fields. Password changes must use /change-password; a nonempty password here returns 400.
       requestBody:
         required: true
         content:
@@ -1210,7 +1215,270 @@ paths:
           description: User not found
         '500':
           description: Server error
+  /me:
+    get:
+      tags:
+      - User
+      operationId: getMe
+      description: Returns the authenticated user. Never includes a password.
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Authentication required
+  /account-entries:
+    get:
+      tags:
+      - AccountEntry
+      operationId: searchAccountEntries
+      description: Only current user entries in active wallets. Dates inclusive in UTC.
+        Search matches comment literally, case-insensitive. Stable ordering uses id
+        as tie-breaker.
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: query
+        name: walletId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: categoryId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: typeId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: search
+        schema:
+          type: string
+          maxLength: 200
+      - in: query
+        name: page
+        schema:
+          type: integer
+          maximum: 21474836
+          minimum: 0
+          default: 0
+      - in: query
+        name: size
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - in: query
+        name: sortBy
+        schema:
+          type: string
+          enum:
+          - date
+          - amount
+          - id
+          default: date
+      - in: query
+        name: direction
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountEntryPage'
+        '400':
+          description: Invalid filters
+        '401':
+          description: Authentication required
+        '404':
+          description: Wallet not found or not owned by the current user
+  /dashboard/summary:
+    get:
+      tags:
+      - Dashboard
+      operationId: getDashboardSummary
+      description: Only the authenticated user's entries in active wallets. Dates are
+        inclusive in UTC. Positive amounts are income; negative amounts are expenses.
+        Returns period income, positive expense totals, net and entry count. Balance
+        is the current total balance of selected active wallets, independent of date
+        filters.
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: query
+        name: walletId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+        '400':
+          description: Invalid filters
+        '401':
+          description: Authentication required
+        '404':
+          description: Wallet not found or not owned by the current user
+  /dashboard/by-category:
+    get:
+      tags:
+      - Dashboard
+      operationId: getDashboardByCategory
+      description: Only the authenticated user's entries in active wallets. Dates are
+        inclusive in UTC. Positive amounts are income; negative amounts are expenses.
+        Returns period income, positive expense totals, net and count grouped by category.
+        Null category identifies uncategorized entries.
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: query
+        name: walletId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryTotals'
+        '400':
+          description: Invalid filters
+        '401':
+          description: Authentication required
+        '404':
+          description: Wallet not found or not owned by the current user
+  /dashboard/monthly:
+    get:
+      tags:
+      - Dashboard
+      operationId: getDashboardMonthly
+      description: Only the authenticated user's entries in active wallets. Dates are
+        inclusive in UTC. Positive amounts are income; negative amounts are expenses.
+        Returns period income, positive expense totals, net and count grouped by UTC
+        calendar month (YYYY-MM). Only months with dated entries are returned.
+      security:
+      - bearerAuth: []
+      parameters:
+      - in: query
+        name: walletId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MonthlyTotals'
+        '400':
+          description: Invalid filters
+        '401':
+          description: Authentication required
+        '404':
+          description: Wallet not found or not owned by the current user
+  /change-password:
+    post:
+      tags:
+      - Auth
+      operationId: changePassword
+      security:
+      - bearerAuth: []
+      description: Changes own password and invalidates all existing tokens, including
+        the current one. Log in again. New passwords need at least 8 characters and
+        at most 72 UTF-8 bytes; new password must differ.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '204':
+          description: Password changed; log in again
+        '400':
+          description: Invalid new password
+        '401':
+          description: Authentication required
+        '403':
+          description: Current password is incorrect
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     AuthRequest:
       type: object
@@ -1239,7 +1507,7 @@ components:
           format: int64
         budget:
           type: number
-          format: float
+          description: Exact decimal balance with two fractional digits
         comment:
           type: string
         name:
@@ -1371,6 +1639,7 @@ components:
           type: string
         password:
           type: string
+          writeOnly: true
         email:
           type: string
         comment:
@@ -1380,3 +1649,118 @@ components:
           format: date-time
         role:
           $ref: '#/components/schemas/Role'
+    ChangePasswordRequest:
+      type: object
+      required:
+      - currentPassword
+      - newPassword
+      properties:
+        currentPassword:
+          type: string
+          minLength: 1
+          maxLength: 72
+          writeOnly: true
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 72
+          writeOnly: true
+    AccountEntryPage:
+      type: object
+      required:
+      - items
+      - page
+      - size
+      - totalElements
+      - totalPages
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountEntry'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+    DashboardSummary:
+      type: object
+      required:
+      - income
+      - expenses
+      - net
+      - entryCount
+      - balance
+      properties:
+        income:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        expenses:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        net:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        entryCount:
+          type: integer
+          format: int64
+        balance:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+    CategoryTotals:
+      type: object
+      required:
+      - income
+      - expenses
+      - net
+      - entryCount
+      - categoryId
+      - categoryName
+      properties:
+        income:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        expenses:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        net:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        entryCount:
+          type: integer
+          format: int64
+        categoryId:
+          type: integer
+          format: int64
+          nullable: true
+        categoryName:
+          type: string
+          nullable: true
+    MonthlyTotals:
+      type: object
+      required:
+      - income
+      - expenses
+      - net
+      - entryCount
+      - month
+      properties:
+        income:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        expenses:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        net:
+          type: number
+          description: Exact decimal amount, maximum two fractional digits
+        entryCount:
+          type: integer
+          format: int64
+        month:
+          type: string
+          example: 2026-10
