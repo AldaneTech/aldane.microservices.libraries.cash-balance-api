@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0] - 2026-10-13
+### Added
+- Added authenticated language preferences through `GET /me/preferences` and `PUT /me/preferences`.
+- Supported Spanish (`es`) and English (`en`), with Spanish as the default language.
+
 ## [1.4.0] - 2026-10-12
 ### Added
 - Added authenticated profile (`GET /me`) and password change (`POST /change-password`).
